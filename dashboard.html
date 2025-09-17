@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard - NeighborSolve</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-city me-2"></i>
+                NeighborSolve
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="feed.html">Feed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="information.html">Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-light me-2" id="themeToggle" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <span class="text-light me-3">
+                        <i class="fas fa-user-shield me-1"></i>
+                        Authority Panel
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="hero-section d-flex align-items-center" style="min-height: 30vh;">
+        <div class="hero-bg"></div>
+        <div class="container text-center text-white position-relative">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3" data-aos="fade-up">
+                        Authority <span class="text-gradient">Dashboard</span>
+                    </h1>
+                    <p class="lead mb-0" data-aos="fade-up" data-aos-delay="200">
+                        Manage and track community issues reported by residents
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="py-5" style="margin-top: -50px; position: relative; z-index: 2;">
+        <div class="container">
+            <!-- Login Gate -->
+            <div id="loginGate" class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="glass-card p-5 text-center" data-aos="fade-up">
+                        <div class="mb-4">
+                            <i class="fas fa-lock text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="mb-4">Authority Access Required</h3>
+                        <p class="text-muted mb-4">
+                            This dashboard is restricted to authorized municipal personnel. 
+                            Please log in with your credentials to continue.
+                        </p>
+                        
+                        <form id="loginForm" class="text-start">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" 
+                                       placeholder="Enter username" value="admin">
+                            </div>
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" 
+                                       placeholder="Enter password" value="admin">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Sign In
+                            </button>
+                        </form>
+                        
+                        <small class="text-muted">
+                            Demo credentials: admin / admin
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Main Content -->
+            <div id="dashboardContent" style="display: none;">
+                <!-- Statistics Overview -->
+                <div class="row mb-4" data-aos="fade-up">
+                    <div class="col-12">
+                        <div class="glass-card p-4">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-3 mb-md-0">
+                                    <div class="stat-item">
+                                        <div class="stat-icon mb-2 mx-auto bg-primary">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                        <h3 class="stat-number text-primary" id="dashTotalIssues">0</h3>
+                                        <p class="stat-label">Total Issues</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3 mb-md-0">
+                                    <div class="stat-item">
+                                        <div class="stat-icon mb-2 mx-auto bg-danger">
+                                            <i class="fas fa-clock text-white"></i>
+                                        </div>
+                                        <h3 class="stat-number text-danger" id="dashPendingIssues">0</h3>
+                                        <p class="stat-label">Pending Review</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3 mb-md-0">
+                                    <div class="stat-item">
+                                        <div class="stat-icon mb-2 mx-auto bg-warning">
+                                            <i class="fas fa-cogs text-white"></i>
+                                        </div>
+                                        <h3 class="stat-number text-warning" id="dashInProgressIssues">0</h3>
+                                        <p class="stat-label">In Progress</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <div class="stat-icon mb-2 mx-auto bg-success">
+                                            <i class="fas fa-check-circle text-white"></i>
+                                        </div>
+                                        <h3 class="stat-number text-success" id="dashResolvedIssues">0</h3>
+                                        <p class="stat-label">Resolved</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="row mb-4" data-aos="fade-up">
+                    <div class="col-lg-6 mb-4">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-pie me-2"></i>
+                                Issues by Category
+                            </h5>
+                            <canvas id="categoryChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Resolution Trends
+                            </h5>
+                            <canvas id="trendChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issues Management -->
+                <div class="row">
+                    <div class="col-12" data-aos="fade-up">
+                        <div class="glass-card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tasks me-2"></i>
+                                    Issues Management
+                                </h5>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" id="dashStatusFilter" style="width: auto;">
+                                        <option value="">All Status</option>
+                                        <option value="reported">Reported</option>
+                                        <option value="progress">In Progress</option>
+                                        <option value="resolved">Resolved</option>
+                                    </select>
+                                    <select class="form-select form-select-sm" id="dashCategoryFilter" style="width: auto;">
+                                        <option value="">All Categories</option>
+                                        <option value="pothole">Pothole</option>
+                                        <option value="streetlight">Streetlight</option>
+                                        <option value="water">Water</option>
+                                        <option value="garbage">Garbage</option>
+                                        <option value="safety">Safety</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Issues Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="issuesTableBody">
+                                        <!-- Issues will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Issue Update Modal -->
+    <div class="modal fade" id="updateIssueModal" tabindex="-1" aria-labelledby="updateIssueModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateIssueModalLabel">Update Issue Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateIssueForm">
+                        <input type="hidden" id="updateIssueId">
+                        
+                        <div class="mb-3">
+                            <label for="updateStatus" class="form-label">Status</label>
+                            <select class="form-select" id="updateStatus" required>
+                                <option value="reported">Reported</option>
+                                <option value="progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="updateNotes" class="form-label">Update Notes</label>
+                            <textarea class="form-control" id="updateNotes" rows="3" 
+                                     placeholder="Add notes about the progress or resolution..."></textarea>
+                        </div>
+
+                        <div class="mb-3" id="proofPhotoSection" style="display: none;">
+                            <label for="proofPhoto" class="form-label">
+                                Upload Proof Photo (for resolved issues)
+                            </label>
+                            <input type="file" class="form-control" id="proofPhoto" accept="image/*">
+                            <div class="form-text">
+                                Upload a photo showing the resolved issue
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="estimatedCompletion" class="form-label">Estimated Completion Date</label>
+                            <input type="date" class="form-control" id="estimatedCompletion">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="assignedDepartment" class="form-label">Assigned Department</label>
+                            <select class="form-select" id="assignedDepartment">
+                                <option value="">Select Department</option>
+                                <option value="roads">Roads & Transportation</option>
+                                <option value="utilities">Utilities Department</option>
+                                <option value="sanitation">Sanitation Services</option>
+                                <option value="parks">Parks & Recreation</option>
+                                <option value="police">Police Department</option>
+                                <option value="fire">Fire Department</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveUpdateBtn">
+                        <i class="fas fa-save me-1"></i>
+                        Save Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Detail Modal -->
+    <div class="modal fade" id="issueDetailModal" tabindex="-1" aria-labelledby="issueDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="issueDetailModalLabel">Issue Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="issueDetailModalBody">
+                    <!-- Issue details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateStatusBtn">
+                        <i class="fas fa-edit me-1"></i>
+                        Update Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Issue updated successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 NeighborSolve. Building better communities together.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="social-link me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+    
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+    </script>
+</body>
+</html>

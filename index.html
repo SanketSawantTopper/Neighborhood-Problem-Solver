@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neighborhood Problem Solver</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#home">
+                <i class="fas fa-city me-2"></i>
+                NeighborSolve
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="feed.html">Feed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="information.html">Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Dark Mode Toggle -->
+                    <button class="btn btn-outline-light me-2" id="themeToggle" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <!-- Report Issue CTA -->
+                    <a href="report.html" class="btn btn-primary report-btn">
+                        <i class="fas fa-plus me-1"></i> Report Issue
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section min-vh-100 d-flex align-items-center">
+        <div class="hero-bg"></div>
+        <div class="container text-center text-white position-relative">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-3 fw-bold mb-4" data-aos="fade-up">
+                        Building Better <span class="text-gradient">Communities</span> Together
+                    </h1>
+                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="200">
+                        Report neighborhood issues, track progress, and create positive change in your community. 
+                        From potholes to streetlights, we're here to help solve local problems efficiently.
+                    </p>
+                    
+                    <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">
+                        <a href="report.html" class="btn btn-primary btn-lg me-3 mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Report a Problem
+                        </a>
+                        <a href="feed.html" class="btn btn-outline-light btn-lg mb-3">
+                            <i class="fas fa-eye me-2"></i>
+                            View Issues
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section py-5" data-aos="fade-up">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="stat-card glass-card h-100 p-4">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="stat-number" data-target="1248">0</h3>
+                        <p class="stat-label">Issues Reported</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="stat-card glass-card h-100 p-4">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="stat-number" data-target="89">0</h3>
+                        <p class="stat-label">In Progress</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="stat-card glass-card h-100 p-4">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="stat-number" data-target="1159">0</h3>
+                        <p class="stat-label">Resolved</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title" data-aos="fade-up">How It Works</h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                        Simple steps to make your neighborhood better
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card glass-card text-center p-4 h-100">
+                        <div class="step-number">01</div>
+                        <div class="step-icon mb-3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Report</h4>
+                        <p>Spot a problem in your neighborhood? Report it quickly with photos and location details.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card glass-card text-center p-4 h-100">
+                        <div class="step-number">02</div>
+                        <div class="step-icon mb-3">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4>Track</h4>
+                        <p>Monitor the progress of your report and see real-time updates from local authorities.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-card glass-card text-center p-4 h-100">
+                        <div class="step-number">03</div>
+                        <div class="step-icon mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h4>Resolve</h4>
+                        <p>Get notified when your issue is resolved and see the positive impact on your community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                    <h2 class="section-title">Why Choose NeighborSolve?</h2>
+                    <p class="section-subtitle mb-4">
+                        Empowering communities with smart, efficient problem-solving tools
+                    </p>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item d-flex mb-3">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h5>Location-Based Reporting</h5>
+                                <p>Precise GPS tracking ensures issues are reported exactly where they occur.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item d-flex mb-3">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div>
+                                <h5>Photo Documentation</h5>
+                                <p>Visual evidence helps authorities understand and prioritize problems effectively.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item d-flex mb-3">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div>
+                                <h5>Real-Time Updates</h5>
+                                <p>Stay informed with instant notifications about your reported issues.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <h5>Community Engagement</h5>
+                                <p>Connect with neighbors and support issues that matter to your community.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="features-image">
+                        <img src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=600&h=400&fit=crop" 
+                             alt="Community collaboration" class="img-fluid rounded-4 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <div class="cta-card glass-card p-5" data-aos="zoom-in">
+                        <h2 class="mb-4">Ready to Make a Difference?</h2>
+                        <p class="lead mb-4">
+                            Join thousands of neighbors who are actively improving their communities. 
+                            Report your first issue today and be part of the positive change.
+                        </p>
+                        <div class="cta-buttons">
+                            <a href="report.html" class="btn btn-primary btn-lg me-3 mb-3">
+                                <i class="fas fa-plus me-2"></i>
+                                Report an Issue
+                            </a>
+                            <a href="information.html" class="btn btn-outline-primary btn-lg mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 NeighborSolve. Building better communities together.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="social-link me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
