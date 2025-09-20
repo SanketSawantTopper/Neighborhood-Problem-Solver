@@ -709,19 +709,146 @@ function initializeContactPage() {
 function handleContactSubmission(event) {
     event.preventDefault();
     
+    console.log('📧 Contact form submission started');
+    
     const form = event.target;
     if (!form.checkValidity()) {
         form.classList.add('was-validated');
+        console.log('❌ Form validation failed');
         return;
     }
     
-    // Show success modal
-    const modal = new bootstrap.Modal(document.getElementById('contactSuccessModal'));
-    modal.show();
+    // Check Firebase availability
+    if (typeof firebase === 'undefined') {
+        console.error('❌ Firebase SDK not loaded');
+        showErrorMessage('Firebase not loaded. Please check your internet connection and refresh the page.');
+        return;
+    }
     
-    // Reset form
-    form.reset();
-    form.classList.remove('was-validated');
+    if (!window.db) {
+        console.error('❌ Firestore database not initialized');
+        showErrorMessage('Database not initialized. Please check your Firebase configuration.');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.getElementById('sendMessageBtn');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+    
+    // Collect form data
+    const formData = {
+        name: document.getElementById('contactName').value.trim(),
+        email: document.getElementById('contactEmail').value.trim(),
+        phone: document.getElementById('contactPhone').value.trim() || null,
+        subject: document.getElementById('contactSubject').value,
+        message: document.getElementById('contactMessage').value.trim(),
+        newsletter: document.getElementById('newsletterSubscribe').checked,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'new',
+        userAgent: navigator.userAgent,
+        pageUrl: window.location.href
+    };
+    
+    console.log('📊 Form data collected:', {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        messageLength: formData.message.length
+    });
+    
+    // Save to Firebase Firestore
+    console.log('🔥 Attempting to save to Firestore...');
+    
+    window.db.collection('contacts')
+        .add(formData)
+        .then((docRef) => {
+            console.log('✅ Contact form submitted successfully with ID:', docRef.id);
+            
+            // Show success modal
+            const modal = new bootstrap.Modal(document.getElementById('contactSuccessModal'));
+            modal.show();
+            
+            // Reset form
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            
+            // Update success modal with submission ID
+            updateSuccessModal(docRef.id);
+        })
+        .catch((error) => {
+            console.error('❌ Error submitting contact form:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
+            
+            let errorMessage = 'Failed to send message. ';
+            
+            // Provide specific error messages
+            if (error.code === 'permission-denied') {
+                errorMessage += 'Database permission denied. Please check Firestore security rules.';
+            } else if (error.code === 'unavailable') {
+                errorMessage += 'Database temporarily unavailable. Please try again.';
+            } else if (error.code === 'unauthenticated') {
+                errorMessage += 'Authentication required. Please check Firebase configuration.';
+            } else {
+                errorMessage += 'Please try again or contact us directly.';
+            }
+            
+            showErrorMessage(errorMessage);
+            
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+}
+
+// Function to update success modal with submission ID
+function updateSuccessModal(submissionId) {
+    const modal = document.getElementById('contactSuccessModal');
+    const modalBody = modal.querySelector('.modal-body');
+    
+    // Add submission ID to the success message
+    const existingId = modalBody.querySelector('.submission-id');
+    if (!existingId) {
+        const idElement = document.createElement('p');
+        idElement.className = 'submission-id small text-muted mt-2';
+        idElement.innerHTML = `<strong>Reference ID:</strong> ${submissionId.substring(0, 8).toUpperCase()}`;
+        modalBody.appendChild(idElement);
+    }
+}
+
+// Function to show error messages
+function showErrorMessage(message) {
+    // Create or update error alert
+    let errorAlert = document.querySelector('.contact-error-alert');
+    
+    if (!errorAlert) {
+        errorAlert = document.createElement('div');
+        errorAlert.className = 'alert alert-danger alert-dismissible fade show contact-error-alert mt-3';
+        errorAlert.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span class="error-message">${message}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const form = document.getElementById('contactForm');
+        form.parentNode.insertBefore(errorAlert, form.nextSibling);
+    } else {
+        errorAlert.querySelector('.error-message').textContent = message;
+        errorAlert.style.display = 'block';
+    }
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (errorAlert) {
+            errorAlert.style.display = 'none';
+        }
+    }, 5000);
 }
 
 // ==========================================

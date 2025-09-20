@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        code { background: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔥 Firebase Connection Test</h1>
+    <p>This page will help you diagnose Firebase connection issues.</p>
+    
+    <div id="status-container">
+        <div class="status info">
+            <strong>🔄 Testing Firebase connection...</strong>
+        </div>
+    </div>
+    
+    <h2>🧪 Tests</h2>
+    <button class="btn-primary" onclick="testFirebaseSDK()">Test Firebase SDK</button>
+    <button class="btn-success" onclick="testFirestoreConnection()">Test Firestore Connection</button>
+    <button class="btn-warning" onclick="testFormSubmission()">Test Form Submission</button>
+    
+    <h2>📋 Configuration Check</h2>
+    <div id="config-info"></div>
+    
+    <h2>📝 Console Output</h2>
+    <div id="console-output" style="background: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto;"></div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // Capture console logs
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.style.marginBottom = '5px';
+            div.style.color = type === 'error' ? '#d32f2f' : '#333';
+            div.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        // Update status
+        function updateStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}"><strong>${message}</strong></div>`;
+        }
+        
+        // Test Firebase SDK
+        function testFirebaseSDK() {
+            addToConsole('🧪 Testing Firebase SDK...');
+            
+            if (typeof firebase === 'undefined') {
+                updateStatus('❌ Firebase SDK not loaded! Check your internet connection.', 'error');
+                addToConsole('❌ Firebase SDK is not available');
+                return false;
+            }
+            
+            updateStatus('✅ Firebase SDK loaded successfully!', 'success');
+            addToConsole('✅ Firebase SDK is available');
+            addToConsole(`Firebase version: ${firebase.SDK_VERSION || 'Unknown'}`);
+            return true;
+        }
+        
+        // Test Firestore connection
+        function testFirestoreConnection() {
+            addToConsole('🧪 Testing Firestore connection...');
+            
+            if (!testFirebaseSDK()) return;
+            
+            if (!window.db) {
+                updateStatus('❌ Firestore not initialized! Check your Firebase configuration.', 'error');
+                addToConsole('❌ window.db is not available');
+                return false;
+            }
+            
+            // Test basic Firestore operation
+            window.db.enableNetwork()
+                .then(() => {
+                    updateStatus('✅ Firestore connection successful!', 'success');
+                    addToConsole('✅ Firestore connection established');
+                    
+                    // Show configuration info
+                    const config = firebase.apps[0].options;
+                    document.getElementById('config-info').innerHTML = `
+                        <div class="status info">
+                            <strong>📋 Current Configuration:</strong><br>
+                            Project ID: <code>${config.projectId}</code><br>
+                            Auth Domain: <code>${config.authDomain}</code><br>
+                            App ID: <code>${config.appId ? config.appId.substring(0, 20) + '...' : 'Not set'}</code>
+                        </div>
+                    `;
+                })
+                .catch((error) => {
+                    updateStatus('❌ Firestore connection failed!', 'error');
+                    addToConsole(`❌ Firestore error: ${error.message}`);
+                });
+        }
+        
+        // Test form submission
+        function testFormSubmission() {
+            addToConsole('🧪 Testing form submission...');
+            
+            if (!window.db) {
+                updateStatus('❌ Cannot test form submission - Firestore not initialized', 'error');
+                return;
+            }
+            
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                subject: 'technical',
+                message: 'This is a test message from the Firebase connection test.',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'test',
+                source: 'connection-test'
+            };
+            
+            updateStatus('🔄 Submitting test data...', 'warning');
+            addToConsole('📤 Submitting test data to Firestore...');
+            
+            window.db.collection('contacts')
+                .add(testData)
+                .then((docRef) => {
+                    updateStatus(`✅ Test submission successful! ID: ${docRef.id.substring(0, 8)}...`, 'success');
+                    addToConsole(`✅ Test document created with ID: ${docRef.id}`);
+                    addToConsole('🎉 Your contact form should work now!');
+                })
+                .catch((error) => {
+                    updateStatus(`❌ Test submission failed: ${error.code}`, 'error');
+                    addToConsole(`❌ Submission error: ${error.code} - ${error.message}`);
+                    
+                    // Provide helpful error messages
+                    if (error.code === 'permission-denied') {
+                        addToConsole('💡 Solution: Make sure Firestore is in "test mode" or update security rules');
+                    } else if (error.code === 'unavailable') {
+                        addToConsole('💡 Solution: Check your internet connection and try again');
+                    } else if (error.code.includes('auth')) {
+                        addToConsole('💡 Solution: Check your Firebase configuration values');
+                    }
+                });
+        }
+        
+        // Run initial tests when page loads
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                addToConsole('🚀 Starting automatic tests...');
+                testFirebaseSDK();
+                setTimeout(() => {
+                    testFirestoreConnection();
+                }, 1000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

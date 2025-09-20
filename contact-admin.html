@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Admin - NeighborSolve</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-city me-2"></i>
+                NeighborSolve Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home me-1"></i> Back to Site
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-envelope me-2"></i>Contact Form Submissions</h2>
+                    <button class="btn btn-primary" onclick="loadContactSubmissions()">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4" id="statsCards">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-envelope fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0" id="totalSubmissions">0</h5>
+                                        <p class="card-text">Total Submissions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0" id="newSubmissions">0</h5>
+                                        <p class="card-text">New Submissions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-eye fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0" id="readSubmissions">0</h5>
+                                        <p class="card-text">Read Submissions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0" id="repliedSubmissions">0</h5>
+                                        <p class="card-text">Replied</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submissions Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Submissions</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="submissionsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                                            <p class="mt-2 text-muted">Loading submissions...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Detail Modal -->
+    <div class="modal fade" id="submissionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Submission Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="submissionModalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="markAsReadBtn">Mark as Read</button>
+                    <button type="button" class="btn btn-success" id="markAsRepliedBtn">Mark as Replied</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        let currentSubmissionId = null;
+        let submissionsData = [];
+
+        // Load contact submissions from Firebase
+        function loadContactSubmissions() {
+            if (!window.db) {
+                console.error('Firebase not initialized');
+                return;
+            }
+
+            window.db.collection('contacts')
+                .orderBy('timestamp', 'desc')
+                .onSnapshot((querySnapshot) => {
+                    submissionsData = [];
+                    querySnapshot.forEach((doc) => {
+                        submissionsData.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    updateStatsCards();
+                    renderSubmissionsTable();
+                }, (error) => {
+                    console.error('Error loading submissions:', error);
+                    showError('Failed to load submissions');
+                });
+        }
+
+        // Update statistics cards
+        function updateStatsCards() {
+            const total = submissionsData.length;
+            const newCount = submissionsData.filter(s => s.status === 'new').length;
+            const readCount = submissionsData.filter(s => s.status === 'read').length;
+            const repliedCount = submissionsData.filter(s => s.status === 'replied').length;
+
+            document.getElementById('totalSubmissions').textContent = total;
+            document.getElementById('newSubmissions').textContent = newCount;
+            document.getElementById('readSubmissions').textContent = readCount;
+            document.getElementById('repliedSubmissions').textContent = repliedCount;
+        }
+
+        // Render submissions table
+        function renderSubmissionsTable() {
+            const tbody = document.getElementById('submissionsTableBody');
+            
+            if (submissionsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-inbox fa-2x text-muted"></i>
+                            <p class="mt-2 text-muted">No submissions found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = submissionsData.map(submission => {
+                const date = submission.timestamp ? 
+                    new Date(submission.timestamp.toDate()).toLocaleDateString() : 
+                    'Unknown';
+                
+                const statusBadge = getStatusBadge(submission.status);
+                
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${submission.name || 'N/A'}</td>
+                        <td>${submission.email || 'N/A'}</td>
+                        <td>${getSubjectLabel(submission.subject)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewSubmission('${submission.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const badges = {
+                'new': '<span class="badge bg-warning">New</span>',
+                'read': '<span class="badge bg-info">Read</span>',
+                'replied': '<span class="badge bg-success">Replied</span>',
+                'closed': '<span class="badge bg-secondary">Closed</span>'
+            };
+            return badges[status] || '<span class="badge bg-secondary">Unknown</span>';
+        }
+
+        // Get subject label
+        function getSubjectLabel(subject) {
+            const subjects = {
+                'general': 'General Inquiry',
+                'technical': 'Technical Support',
+                'feedback': 'Feedback & Suggestions',
+                'partnership': 'Partnership Opportunities',
+                'media': 'Media Inquiries',
+                'other': 'Other'
+            };
+            return subjects[subject] || subject || 'N/A';
+        }
+
+        // View submission details
+        function viewSubmission(submissionId) {
+            const submission = submissionsData.find(s => s.id === submissionId);
+            if (!submission) return;
+
+            currentSubmissionId = submissionId;
+            
+            const modalBody = document.getElementById('submissionModalBody');
+            const date = submission.timestamp ? 
+                new Date(submission.timestamp.toDate()).toLocaleString() : 
+                'Unknown';
+
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Name:</strong> ${submission.name || 'N/A'}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Email:</strong> ${submission.email || 'N/A'}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Phone:</strong> ${submission.phone || 'N/A'}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Subject:</strong> ${getSubjectLabel(submission.subject)}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Date:</strong> ${date}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Newsletter:</strong> ${submission.newsletter ? 'Yes' : 'No'}
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <strong>Message:</strong>
+                    <div class="border p-3 mt-2 bg-light">
+                        ${(submission.message || '').replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                ${submission.userAgent ? `
+                    <div class="mt-3">
+                        <strong>User Agent:</strong>
+                        <small class="text-muted d-block">${submission.userAgent}</small>
+                    </div>
+                ` : ''}
+            `;
+
+            // Update button states
+            const markAsReadBtn = document.getElementById('markAsReadBtn');
+            const markAsRepliedBtn = document.getElementById('markAsRepliedBtn');
+            
+            markAsReadBtn.disabled = submission.status === 'read' || submission.status === 'replied';
+            markAsRepliedBtn.disabled = submission.status === 'replied';
+
+            const modal = new bootstrap.Modal(document.getElementById('submissionModal'));
+            modal.show();
+        }
+
+        // Update submission status
+        function updateSubmissionStatus(status) {
+            if (!currentSubmissionId || !window.db) return;
+
+            window.db.collection('contacts').doc(currentSubmissionId)
+                .update({ status: status })
+                .then(() => {
+                    console.log('Status updated successfully');
+                    // Modal will close and table will refresh automatically due to snapshot listener
+                    bootstrap.Modal.getInstance(document.getElementById('submissionModal')).hide();
+                })
+                .catch((error) => {
+                    console.error('Error updating status:', error);
+                    showError('Failed to update status');
+                });
+        }
+
+        // Show error message
+        function showError(message) {
+            // Simple alert for now - you can enhance this
+            alert(message);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load submissions when page loads
+            setTimeout(loadContactSubmissions, 1000); // Wait for Firebase to initialize
+
+            // Button event listeners
+            document.getElementById('markAsReadBtn').addEventListener('click', () => {
+                updateSubmissionStatus('read');
+            });
+
+            document.getElementById('markAsRepliedBtn').addEventListener('click', () => {
+                updateSubmissionStatus('replied');
+            });
+        });
+    </script>
+</body>
+</html>
